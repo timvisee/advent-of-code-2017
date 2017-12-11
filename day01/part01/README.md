@@ -1,4 +1,6 @@
 # Advent of Code 2017 - Day 01
+
+## Challenge
 The night before Christmas, one of Santa's Elves calls you in a panic. "The
 printer's broken! We can't print the Naughty or Nice List!" By the time you make
 it to sub-basement 17, there are only a few minutes until midnight. "We have
@@ -34,3 +36,6 @@ For example:
 - `1111` produces `4` because each digit (all `1`) matches the next.
 - `1234` produces `0` because no digit matches the next.
 - `91212129` produces `9` because the only digit that matches the next one is the last digit, `9`.
+
+## Input
+My unique input is locate in the [input.txt](input.txt) file.
