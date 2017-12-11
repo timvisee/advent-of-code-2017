@@ -1,4 +1,4 @@
-# Advent of Code 2017 - Day 01
+# Advent of Code 2017 - Day 01 - Part 01
 
 ## Challenge
 The night before Christmas, one of Santa's Elves calls you in a panic. "The

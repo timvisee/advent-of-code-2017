@@ -1,4 +1,4 @@
-# Advent of Code 2017 - Day 01
+# Advent of Code 2017 - Day 02 - Part 01
 
 ## Challenge
 As you walk through the door, a glowing humanoid shape yells in your direction.

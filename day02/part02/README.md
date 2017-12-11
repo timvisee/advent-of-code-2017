@@ -1,4 +1,4 @@
-# Advent of Code 2017 - Day 02
+# Advent of Code 2017 - Day 02 - Part 02
 
 ## Challenge
 "Great work; looks like we're on the right track after all.

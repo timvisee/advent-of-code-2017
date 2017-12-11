@@ -1,4 +1,4 @@
-# Advent of Code 2017 - Day 01
+# Advent of Code 2017 - Day 01 - Part 02
 
 ## Challenge
 You notice a progress bar that jumps to 50% completion. 
