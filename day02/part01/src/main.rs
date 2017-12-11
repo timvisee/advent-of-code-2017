@@ -2,11 +2,11 @@ use std::cmp::{min, max};
 use std::io::stdin;
 
 fn main() {
-    // Define a variable for the result
-    let mut result = 0;
-
     // Ask the user for input
     println!("Please enter the sheet of numbers, followed by an empty line:");
+
+    // Create a list of rows
+    let mut rows = Vec::new();
 
     // Loop through each input row
     loop {
@@ -15,15 +15,31 @@ fn main() {
         stdin()
             .read_line(&mut input)
             .expect("Please enter a valid row");
-        let input = input.trim();
+        let input = input.trim().to_string();
 
         // If the input is empty, break
         if input.is_empty() {
             break;
         }
 
+        // Add the row to the list
+        rows.push(input);
+    }
+
+    // Print the result
+    println!("The result is: {}", differences(rows));
+}
+
+/// Calculate the sum of the difference on each given row,
+/// as defined by the challenge.
+fn differences(rows: Vec<String>) -> u16 {
+    // Define a variable for the result
+    let mut result = 0;
+
+    // Process each row
+    for row in rows {
         // Split the row into separate numbers, parse them
-        let numbers = input
+        let numbers = row
             .split("\t")
             .map(|s| s.parse::<u16>().expect("Invalid row entered"));
 
@@ -34,8 +50,7 @@ fn main() {
         result += max - min;
     }
 
-    // Print the result
-    println!("The result is: {}", result);
+    result
 }
 
 
@@ -72,3 +87,14 @@ trait IteratorMinMax: Iterator {
 }
 
 impl<I> IteratorMinMax for I where I: Iterator {}
+
+
+
+#[test]
+fn example() {
+    assert_eq!(differences(vec![
+        "5\t1\t9\t5".into(),
+        "7\t5\t3".into(),
+        "2\t4\t6\t8".into(),
+    ]), 18)
+}

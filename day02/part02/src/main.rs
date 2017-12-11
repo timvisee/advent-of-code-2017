@@ -1,28 +1,44 @@
 use std::io::stdin;
 
 fn main() {
-    // Define a variable for the result
-    let mut result = 0;
-
     // Ask the user for input
     println!("Please enter the sheet of numbers, followed by an empty line:");
 
+    // Create a list of rows
+    let mut rows = Vec::new();
+
     // Process each input row
-    'processor: loop {
+    loop {
         // Get a new input row
         let mut input = String::new();
         stdin()
             .read_line(&mut input)
             .expect("Please enter a valid row");
-        let input = input.trim();
+        let input = input.trim().to_string();
 
         // If the row is empty, we're done
         if input.is_empty() {
             break;
         }
 
+        // Add the row to the list
+        rows.push(input);
+    }
+
+    // Print the result
+    println!("The result is: {}", divisions_sum(rows));
+}
+
+/// Sum up the divisions for each row,
+/// as defined by the challenge.
+fn divisions_sum(rows: Vec<String>) -> u16 {
+    // Define a variable for the result
+    let mut result = 0;
+
+    // Process each input row
+    'processor: for row in rows  {
         // Split the row into separate numbers, parse and collect them
-        let numbers: Vec<u16> = input
+        let numbers: Vec<u16> = row
             .split("\t")
             .map(|s| s.parse::<u16>().expect("Invalid row entered"))
             .collect();
@@ -50,6 +66,16 @@ fn main() {
         panic!("Invalid input, row contains no divisible pair");
     }
 
-    // Print the result
-    println!("The result is: {}", result);
+    result
+}
+
+
+
+#[test]
+fn example() {
+    assert_eq!(divisions_sum(vec![
+        "5\t9\t2\t8".into(),
+        "9\t4\t7\t3".into(),
+        "3\t8\t6\t5".into(),
+    ]), 9)
 }

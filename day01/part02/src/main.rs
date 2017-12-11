@@ -7,6 +7,14 @@ fn main() {
     stdin()
         .read_line(&mut input)
         .expect("Please enter a valid input number");
+
+    // Print the result
+    println!("The result is: {}", captcha(input));
+}
+
+/// Calculate the captcha result as defined by the challenge.
+fn captcha(input: String) -> i32 {
+    // Trim the input
     let input = input.trim();
 
     // Get the number size
@@ -21,22 +29,48 @@ fn main() {
                 .skip(size / 2)
         );
 
-    // Define a variable for the sum
-    let mut sum = 0;
+    // Define a variable for the result
+    let mut result = 0;
 
     // Loop through the list
     for _ in 0..size {
         // Get the current and other numbers
         let (current, other) = iterator.next().unwrap();
 
-        // Add to the sum if the value is the same as the next
+        // Add to the result if the value is the same as the next
         if current == other {
-            sum += current
+            result += current
                 .to_digit(10)
                 .expect("Invalid input number entered");
         }
     }
 
-    // Print the result
-    println!("The result is: {}", sum);
+    result
+}
+
+
+
+#[test]
+fn example_one() {
+    assert_eq!(captcha(String::from("1212")), 6)
+}
+
+#[test]
+fn example_two() {
+    assert_eq!(captcha(String::from("1221")), 0)
+}
+
+#[test]
+fn example_three() {
+    assert_eq!(captcha(String::from("123425")), 4)
+}
+
+#[test]
+fn example_four() {
+    assert_eq!(captcha(String::from("123123")), 12)
+}
+
+#[test]
+fn example_five() {
+    assert_eq!(captcha(String::from("12131415")), 4)
 }
