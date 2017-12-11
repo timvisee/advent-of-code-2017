@@ -23,8 +23,8 @@ fn main() {
 
         // Split the row into separate numbers, parse them
         let numbers = input
-            .split(" ")
-            .map(|s| s.parse::<u8>().expect("Invalid row entered"));
+            .split("\t")
+            .map(|s| s.parse::<u16>().expect("Invalid row entered"));
 
         // Get the minimum and maximum values
         let (min, max) = numbers.min_max();
