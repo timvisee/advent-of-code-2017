@@ -38,28 +38,74 @@ fn main() {
 /// This is defined by the challenge.
 fn hex_distance(path: &str) -> i32 {
     // Define the position
-    let mut pos: (i32, i32, i32)  = (0, 0, 0);
+    let mut pos: (i32, i32) = (0, 0);
 
     // Split the path to get directions
     let dirs = path.split(",");
 
     // Loop through each direction
     for dir in dirs {
-        // Modify the position
-        pos = match dir.trim() {
-            "n" => (pos.0 + 1, pos.1, pos.2),
-            "ne" => (pos.0, pos.1 + 1, pos.2),
-            "se" => (pos.0, pos.1, pos.2 + 1),
-            "s" => (pos.0 - 1, pos.1, pos.2),
-            "sw" => (pos.0, pos.1 - 1, pos.2),
-            "nw" => (pos.0, pos.1, pos.2 - 1),
-            dir => panic!("Invalid direction: {:?}", dir),
-        };
+        move_position(&mut pos, dir);
     }
 
-    // Get the distance, wich will be the same as the value on the axis that is
-    // the furthest away from zero
-    max(pos.0.abs(), max(pos.1.abs(), pos.2.abs()))
+    // Calculate the distance and return
+    test(pos, (0, 0))
+}
+
+fn test(a: (i32, i32), b: (i32, i32)) -> i32 {
+    let du = b.1 - a.1;
+    let dv = (b.0 + (b.1 as f32 / 2f32).floor() as i32) 
+        - (a.0 + (a.1 as f32 / 2f32).floor() as i32);
+
+    if sign_equals(du, dv) {
+        max(du.abs(), dv.abs())
+    } else {
+        du.abs() + dv.abs()
+    }
+}
+
+/// Move the given `pos` to the given `dir`.
+///
+/// The position uses 2D axis, while the direction is on a hexagonal grid.
+///
+/// The position is modified in-place.
+fn move_position(pos: &mut (i32, i32), dir: &str) {
+    // Determine whether the x axis is even
+    let even = pos.1 % 2 == 0;
+
+    // Modify the position
+    *pos = match dir.trim() {
+        "n" => (pos.0 - 1, pos.1),
+        "ne" => if even {
+                    (pos.0, pos.1 + 1)
+                } else {
+                    (pos.0 - 1, pos.1 + 1)
+                },
+        "se" => if even {
+                    (pos.0 + 1, pos.1 + 1)
+                } else {
+                    (pos.0, pos.1 + 1)
+                },
+        "s" => (pos.0 + 1, pos.1),
+        "sw" => if even {
+                    (pos.0 + 1, pos.1 - 1)
+                } else {
+                    (pos.0, pos.1 - 1)
+                },
+        "nw" => if even {
+                    (pos.0, pos.1 - 1)
+                } else {
+                    (pos.0 - 1, pos.1 - 1)
+                },
+        dir => panic!("Invalid direction: {:?}", dir),
+    };
+}
+
+/// Check whether the signs of two numbers are equal.
+/// 
+/// True if both numbers are positive or negative.
+fn sign_equals(a: i32, b: i32) -> bool {
+    (a == a.abs()) == (b == b.abs())
 }
 
 
@@ -87,4 +133,9 @@ fn example_four() {
 #[test]
 fn custom_test_one() {
     assert_eq!(hex_distance("n,ne"), 2)
+}
+
+#[test]
+fn custom_test_two() {
+    assert_eq!(hex_distance("se,se,se,se,s,s,nw,s,sw,se"), 7)
 }
