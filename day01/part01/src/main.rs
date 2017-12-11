@@ -1,4 +1,4 @@
-use std::io::{stdin};
+use std::io::stdin;
 
 fn main() {
     // Get the user input

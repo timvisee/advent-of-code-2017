@@ -1,5 +1,5 @@
 use std::cmp::{min, max};
-use std::io::{stdin};
+use std::io::stdin;
 
 fn main() {
     // Define a variable for the result
@@ -8,6 +8,7 @@ fn main() {
     // Ask the user for input
     println!("Please enter the sheet of numbers, followed by an empty line:");
 
+    // Loop through each input row
     loop {
         // Get the user input
         let mut input = String::new();

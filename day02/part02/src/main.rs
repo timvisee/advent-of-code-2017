@@ -1,4 +1,4 @@
-use std::io::{stdin};
+use std::io::stdin;
 
 fn main() {
     // Define a variable for the result
@@ -7,6 +7,7 @@ fn main() {
     // Ask the user for input
     println!("Please enter the sheet of numbers, followed by an empty line:");
 
+    // Process each input row
     'processor: loop {
         // Get a new input row
         let mut input = String::new();
