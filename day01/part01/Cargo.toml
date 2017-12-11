@@ -1,5 +1,5 @@
 [package]
-name = "day01"
+name = "adventofcode-day01-part01"
 version = "0.1.0"
 authors = ["timvisee <timvisee@gmail.com>"]
 
