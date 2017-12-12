@@ -1,13 +1,15 @@
 use std::fs::File;
 use std::io::prelude::*;
-use std::path::Path;
 
 // Input file
 const FILE_INPUT: &'static str = "input.txt";
 
 fn main() {
+    // Get the file
+    let file = File::open(FILE_INPUT);
+
     // Make sure the file exists
-    if !Path::new(FILE_INPUT).is_file() {
+    if file.is_err() {
         println!("File {:?} not found.", FILE_INPUT);
         println!("Please provide this file with the path to walk.");
         println!("- n:  north");
@@ -20,17 +22,14 @@ fn main() {
         return;
     }
 
-    // Get the file
-    let mut file = File::open(FILE_INPUT)
-        .expect("Input file not found.");
-
     // Read the file contents
     let mut path = String::new();
-    file.read_to_string(&mut path)
+    file.unwrap()
+        .read_to_string(&mut path)
         .expect("failed to read input file");
 
-    // Calculate the distance and return the result
-    println!("The result is: {}", hex_distance(&path));
+    // Get the distance for the path
+    println!("The result is: {}", dist(&path));
 }
 
 /// Calculate the distance in tiles to a point on a hexagonal grid.
@@ -46,16 +45,16 @@ fn main() {
 /// - nw: north west
 ///
 /// This is defined by the challenge.
-fn hex_distance(path: &str) -> i32 {
-    // Define a 3D position, used as isometric cube coordinate
-    let mut pos: (i32, i32) = (0, 0);
+fn dist(path: &str) -> i32 {
+    // Walk and get the final position
+    let pos = path
+        .split(",")
+        .fold(
+            (0, 0),
+            |pos, dir| move_pos(pos, dir)
+        );
 
-    // Walk each direction
-    for dir in path.split(",") {
-        move_position(&mut pos, dir);
-    }
-
-    // Find the maximum as distance
+    // Calcualte the distance to the final position
     (pos.0.abs() + pos.1.abs() + (pos.0 + pos.1).abs()) / 2
 }
 
@@ -65,10 +64,9 @@ fn hex_distance(path: &str) -> i32 {
 /// - https://www.redblobgames.com/grids/hexagons/
 /// - http://www-cs-students.stanford.edu/~amitp/Articles/Hexagon2.html
 ///
-/// The position is modified in-place.
-fn move_position(pos: &mut (i32, i32), dir: &str) {
-    // Modify the position
-    *pos = match dir.trim() {
+/// The new position is returned.
+fn move_pos(pos: (i32, i32), dir: &str) -> (i32, i32) {
+    match dir.trim() {
         "n"  => (pos.0    , pos.1 + 1),
         "ne" => (pos.0 + 1, pos.1    ),
         "se" => (pos.0 + 1, pos.1 - 1),
@@ -76,36 +74,36 @@ fn move_position(pos: &mut (i32, i32), dir: &str) {
         "sw" => (pos.0 - 1, pos.1    ),
         "nw" => (pos.0 - 1, pos.1 + 1),
         dir  => panic!("Invalid direction: {:?}", dir),
-    };
+    }
 }
 
 
 
 #[test]
 fn example_one() {
-    assert_eq!(hex_distance("ne,ne,ne"), 3)
+    assert_eq!(dist("ne,ne,ne"), 3)
 }
 
 #[test]
 fn example_two() {
-    assert_eq!(hex_distance("ne,ne,sw,sw"), 0)
+    assert_eq!(dist("ne,ne,sw,sw"), 0)
 }
 
 #[test]
 fn example_three() {
-    assert_eq!(hex_distance("ne,ne,s,s"), 2)
+    assert_eq!(dist("ne,ne,s,s"), 2)
 }
 
 #[test]
 fn example_four() {
-    assert_eq!(hex_distance("se,sw,se,sw,sw"), 3)
+    assert_eq!(dist("se,sw,se,sw,sw"), 3)
 }
 
 #[test]
 fn custom_test_one() {
-    assert_eq!(hex_distance("n,ne"), 2) }
+    assert_eq!(dist("n,ne"), 2) }
 
 #[test]
 fn custom_test_two() {
-    assert_eq!(hex_distance("se,se,se,se,s,s,nw,s,sw,se"), 7)
+    assert_eq!(dist("se,se,se,se,s,s,nw,s,sw,se"), 7)
 }
