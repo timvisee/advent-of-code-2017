@@ -1,3 +1,4 @@
+use std::cmp::max;
 use std::fs::File;
 use std::io::prelude::*;
 
@@ -29,10 +30,10 @@ fn main() {
         .expect("failed to read input file");
 
     // Get the distance for the path
-    println!("The result is: {}", walk_dist_end(&path));
+    println!("The result is: {}", walk_dist_max(&path));
 }
 
-/// Calculate the distance in tiles to a point on a hexagonal grid.
+/// Calculate the maximum distance in tiles reached on a hexagonal grid.
 /// The path is defined a list of directions a player would walk.
 /// Each direction is separated by a comma (,).
 ///
@@ -45,21 +46,26 @@ fn main() {
 /// - nw: north west
 ///
 /// This is defined by the challenge.
-fn walk_dist_end(path: &str) -> i32 {
+fn walk_dist_max(path: &str) -> i32 {
     // Walk and get the final position
-    let pos = path
-        .split(",")
+    path.split(",")
         .fold(
-            (0, 0),
-            |pos, dir| move_pos(pos, dir)
-        );
+            ((0, 0), 0),
+            |data, dir| {
+                // Walk to the new position
+                let pos = move_pos(data.0, dir);
 
-    // Get the distance to the point
-    dist(pos)
+                // Find the distance
+                let dist = max(dist(&pos), data.1);
+
+                // Return
+                (pos, dist)
+            }
+        ).1
 }
 
 /// Find the tile distance to a hexagonal point
-fn dist(pos: (i32, i32)) -> i32 {
+fn dist(pos: &(i32, i32)) -> i32 {
     (pos.0.abs() + pos.1.abs() + (pos.0 + pos.1).abs()) / 2
 }
 
@@ -86,29 +92,29 @@ fn move_pos(pos: (i32, i32), dir: &str) -> (i32, i32) {
 
 #[test]
 fn example_one() {
-    assert_eq!(walk_dist_end("ne,ne,ne"), 3)
+    assert_eq!(walk_dist_max("ne,ne,ne"), 3)
 }
 
 #[test]
 fn example_two() {
-    assert_eq!(walk_dist_end("ne,ne,sw,sw"), 0)
+    assert_eq!(walk_dist_max("ne,ne,sw,sw"), 2)
 }
 
 #[test]
 fn example_three() {
-    assert_eq!(walk_dist_end("ne,ne,s,s"), 2)
+    assert_eq!(walk_dist_max("ne,ne,s,s"), 2)
 }
 
 #[test]
 fn example_four() {
-    assert_eq!(walk_dist_end("se,sw,se,sw,sw"), 3)
+    assert_eq!(walk_dist_max("se,sw,se,sw,sw"), 3)
 }
 
 #[test]
 fn custom_test_one() {
-    assert_eq!(walk_dist_end("n,ne"), 2) }
+    assert_eq!(walk_dist_max("n,ne"), 2) }
 
 #[test]
 fn custom_test_two() {
-    assert_eq!(walk_dist_end("se,se,se,se,s,s,nw,s,sw,se"), 7)
+    assert_eq!(walk_dist_max("se,se,se,se,s,s,nw,s,sw,se"), 7)
 }
