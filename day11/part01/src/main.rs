@@ -1,13 +1,15 @@
+//! Used resource: 
+
 use std::cmp::max;
 use std::io::stdin;
 
 fn main() {
     // Ask the user to input a path
     println!("Please enter a path to walk.");
-    println!("- n: north");
+    println!("- n:  north");
     println!("- ne: north east");
     println!("- se: south east");
-    println!("- s: south");
+    println!("- s:  south");
     println!("- sw: south west");
     println!("- nw: north west");
     println!("Separate each direction by a comma (,):");
@@ -28,84 +30,45 @@ fn main() {
 /// Each direction is separated by a comma (,).
 ///
 /// Directions:
-/// - n: north
+/// - n:  north
 /// - ne: north east
 /// - se: south east
-/// - s: south
+/// - s:  south
 /// - sw: south west
 /// - nw: north west
 ///
 /// This is defined by the challenge.
 fn hex_distance(path: &str) -> i32 {
-    // Define the position
-    let mut pos: (i32, i32) = (0, 0);
+    // Define a 3D position, used as isometric cube coordinate
+    let mut pos: (i32, i32, i32) = (0, 0, 0);
 
-    // Split the path to get directions
-    let dirs = path.split(",");
-
-    // Loop through each direction
-    for dir in dirs {
+    // Walk each direction
+    for dir in path.split(",") {
         move_position(&mut pos, dir);
     }
 
-    // Calculate the distance and return
-    test(pos, (0, 0))
+    // Find the maximum as distance
+    max(max(pos.0.abs(), pos.1.abs()), pos.2.abs())
 }
 
-fn test(a: (i32, i32), b: (i32, i32)) -> i32 {
-    let du = b.1 - a.1;
-    let dv = (b.0 + (b.1 as f32 / 2f32).floor() as i32) 
-        - (a.0 + (a.1 as f32 / 2f32).floor() as i32);
-
-    if sign_equals(du, dv) {
-        max(du.abs(), dv.abs())
-    } else {
-        du.abs() + dv.abs()
-    }
-}
-
-/// Move the given `pos` to the given `dir`.
+/// Move the given 3D `pos` to the given `dir`.
 ///
-/// The position uses 2D axis, while the direction is on a hexagonal grid.
+/// This is using isometric cube coordinates, see:
+/// - https://www.redblobgames.com/grids/hexagons/
+/// - http://www-cs-students.stanford.edu/~amitp/Articles/Hexagon2.html
 ///
 /// The position is modified in-place.
-fn move_position(pos: &mut (i32, i32), dir: &str) {
-    // Determine whether the x axis is even
-    let even = pos.1 % 2 == 0;
-
+fn move_position(pos: &mut (i32, i32, i32), dir: &str) {
     // Modify the position
     *pos = match dir.trim() {
-        "n" => (pos.0 - 1, pos.1),
-        "ne" => if even {
-                    (pos.0, pos.1 + 1)
-                } else {
-                    (pos.0 - 1, pos.1 + 1)
-                },
-        "se" => if even {
-                    (pos.0 + 1, pos.1 + 1)
-                } else {
-                    (pos.0, pos.1 + 1)
-                },
-        "s" => (pos.0 + 1, pos.1),
-        "sw" => if even {
-                    (pos.0 + 1, pos.1 - 1)
-                } else {
-                    (pos.0, pos.1 - 1)
-                },
-        "nw" => if even {
-                    (pos.0, pos.1 - 1)
-                } else {
-                    (pos.0 - 1, pos.1 - 1)
-                },
-        dir => panic!("Invalid direction: {:?}", dir),
+        "n"  => (pos.0    , pos.1 + 1, 0 -  pos.0      - (pos.1 + 1)),
+        "ne" => (pos.0 + 1, pos.1    , 0 - (pos.0 + 1) -  pos.1     ),
+        "se" => (pos.0 + 1, pos.1 - 1, 0 - (pos.0 + 1) - (pos.1 - 1)),
+        "s"  => (pos.0    , pos.1 - 1, 0 -  pos.0      - (pos.1 - 1)),
+        "sw" => (pos.0 - 1, pos.1    , 0 - (pos.0 - 1) -  pos.1     ),
+        "nw" => (pos.0 - 1, pos.1 + 1, 0 - (pos.0 - 1) - (pos.1 + 1)),
+        dir  => panic!("Invalid direction: {:?}", dir),
     };
-}
-
-/// Check whether the signs of two numbers are equal.
-/// 
-/// True if both numbers are positive or negative.
-fn sign_equals(a: i32, b: i32) -> bool {
-    (a == a.abs()) == (b == b.abs())
 }
 
 
@@ -132,8 +95,7 @@ fn example_four() {
 
 #[test]
 fn custom_test_one() {
-    assert_eq!(hex_distance("n,ne"), 2)
-}
+    assert_eq!(hex_distance("n,ne"), 2) }
 
 #[test]
 fn custom_test_two() {
