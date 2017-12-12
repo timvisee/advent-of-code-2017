@@ -1,28 +1,36 @@
-//! Used resource: 
+use std::fs::File;
+use std::io::prelude::*;
+use std::path::Path;
 
-use std::cmp::max;
-use std::io::stdin;
+// Input file
+const FILE_INPUT: &'static str = "input.txt";
 
 fn main() {
-    // Ask the user to input a path
-    println!("Please enter a path to walk.");
-    println!("- n:  north");
-    println!("- ne: north east");
-    println!("- se: south east");
-    println!("- s:  south");
-    println!("- sw: south west");
-    println!("- nw: north west");
-    println!("Separate each direction by a comma (,):");
+    // Make sure the file exists
+    if !Path::new(FILE_INPUT).is_file() {
+        println!("File {:?} not found.", FILE_INPUT);
+        println!("Please provide this file with the path to walk.");
+        println!("- n:  north");
+        println!("- ne: north east");
+        println!("- se: south east");
+        println!("- s:  south");
+        println!("- sw: south west");
+        println!("- nw: north west");
+        println!("Separate each direction by a comma.");
+        return;
+    }
 
-    // Get the user input path
+    // Get the file
+    let mut file = File::open(FILE_INPUT)
+        .expect("Input file not found.");
+
+    // Read the file contents
     let mut path = String::new();
-    stdin()
-        .read_line(&mut path)
-        .expect("Please enter a valid path");
-    let path = path.trim();
+    file.read_to_string(&mut path)
+        .expect("failed to read input file");
 
     // Calculate the distance and return the result
-    println!("The result is: {}", hex_distance(path));
+    println!("The result is: {}", hex_distance(&path));
 }
 
 /// Calculate the distance in tiles to a point on a hexagonal grid.
@@ -40,7 +48,7 @@ fn main() {
 /// This is defined by the challenge.
 fn hex_distance(path: &str) -> i32 {
     // Define a 3D position, used as isometric cube coordinate
-    let mut pos: (i32, i32, i32) = (0, 0, 0);
+    let mut pos: (i32, i32) = (0, 0);
 
     // Walk each direction
     for dir in path.split(",") {
@@ -48,7 +56,7 @@ fn hex_distance(path: &str) -> i32 {
     }
 
     // Find the maximum as distance
-    max(max(pos.0.abs(), pos.1.abs()), pos.2.abs())
+    (pos.0.abs() + pos.1.abs() + (pos.0 + pos.1).abs()) / 2
 }
 
 /// Move the given 3D `pos` to the given `dir`.
@@ -58,15 +66,15 @@ fn hex_distance(path: &str) -> i32 {
 /// - http://www-cs-students.stanford.edu/~amitp/Articles/Hexagon2.html
 ///
 /// The position is modified in-place.
-fn move_position(pos: &mut (i32, i32, i32), dir: &str) {
+fn move_position(pos: &mut (i32, i32), dir: &str) {
     // Modify the position
     *pos = match dir.trim() {
-        "n"  => (pos.0    , pos.1 + 1, 0 -  pos.0      - (pos.1 + 1)),
-        "ne" => (pos.0 + 1, pos.1    , 0 - (pos.0 + 1) -  pos.1     ),
-        "se" => (pos.0 + 1, pos.1 - 1, 0 - (pos.0 + 1) - (pos.1 - 1)),
-        "s"  => (pos.0    , pos.1 - 1, 0 -  pos.0      - (pos.1 - 1)),
-        "sw" => (pos.0 - 1, pos.1    , 0 - (pos.0 - 1) -  pos.1     ),
-        "nw" => (pos.0 - 1, pos.1 + 1, 0 - (pos.0 - 1) - (pos.1 + 1)),
+        "n"  => (pos.0    , pos.1 + 1),
+        "ne" => (pos.0 + 1, pos.1    ),
+        "se" => (pos.0 + 1, pos.1 - 1),
+        "s"  => (pos.0    , pos.1 - 1),
+        "sw" => (pos.0 - 1, pos.1    ),
+        "nw" => (pos.0 - 1, pos.1 + 1),
         dir  => panic!("Invalid direction: {:?}", dir),
     };
 }
