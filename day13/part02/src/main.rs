@@ -26,21 +26,25 @@ fn main() {
         .read_to_string(&mut record)
         .expect("failed to read input file");
 
-    // Calculate the total severity for the given firewall record
-    println!("The total severity is: {}", severity_for_firewall(&record));
+    // Calculate the delay in picoseconds to wait on the firewall to remain
+    // undetected when passing through
+    println!("The delay to wait is: {}", delay_for_firewall(&record));
 }
 
 /// Calcualte the severity for the given firewall record.
 ///
 /// The total severity is returned.
-fn severity_for_firewall(record: &str) -> u32 {
-    // Parse the layers, and determine the total severity
-    parse_layers(record)
-        .iter()
-        .fold(
-            0,
-            |severity, layer| severity + layer.severity_at_depth_pos(),
+fn delay_for_firewall(record: &str) -> u32 {
+    // Parse the layers
+    let layers = parse_layers(record);
+
+    // Get the delay that is used for the first successful pass
+    (0..).filter(|delay| layers
+            .iter()
+            .all(|layer| !layer.is_detected_at_delay(*delay))
         )
+        .next()
+        .expect("failed to pass through firewall")
 }
 
 /// Parse a record to a list of layers.
@@ -71,10 +75,25 @@ fn parse_layers(record: &str) -> Vec<Layer> {
 
 #[test]
 fn example_one() {
-    assert_eq!(severity_for_firewall("\
+    assert_eq!(delay_for_firewall("
         0: 3
         1: 2
         4: 4
         6: 4
-    "), 24);
+    "), 10);
+}
+
+#[test]
+fn custom_test_one() {
+    assert_eq!(delay_for_firewall("
+        0: 2
+        1: 3
+        2: 4
+        3: 5
+    "), 1);
+}
+
+#[test]
+fn custom_test_two() {
+    assert_eq!(delay_for_firewall(""), 0);
 }
