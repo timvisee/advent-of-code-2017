@@ -34,3 +34,7 @@ cargo run --release -- --day 1 --part 2 --save
 
 ## Resources
 [Advent of Code website](https://adventofcode.com/2017)
+
+## License
+This project is released under the MIT license.
+Check out the [LICENSE](LICENSE) file for more information.
