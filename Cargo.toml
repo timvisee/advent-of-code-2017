@@ -1,0 +1,11 @@
+[package]
+name = "advent-of-code-2017"
+version = "0.1.0"
+authors = ["timvisee <timvisee@gmail.com>"]
+
+[dependencies]
+day01 = { path = "day01" }
+day02 = { path = "day02" }
+day11 = { path = "day11" }
+day12 = { path = "day12" }
+day13 = { path = "day13" }

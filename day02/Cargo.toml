@@ -1,0 +1,9 @@
+[package]
+name = "day02"
+version = "0.1.0"
+authors = ["timvisee <timvisee@gmail.com>"]
+
+[lib]
+path = "./lib.rs"
+
+[dependencies]
