@@ -1,14 +1,12 @@
 # Advent of Code 2017
-My go on the advent of code challenge in 2017.
+My go on the advent of code challenge in 2017 (WIP).
 
 This project includes a runner/manager,
 that allows easy selection of the solution to run.
 
-This runner automatically reads challenge input from the appropriate files,
-and allows easy output saving and selection.
-
-This runner is also useful to add new solutions for challenges without much
-effort.
+This runner automatically reads challenge input from the appropriate files when
+available, but allows manual input if desired.
+Saving output to a file is also possible.
 
 ## Requirements
 - `Rust 1.20`
