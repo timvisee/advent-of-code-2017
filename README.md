@@ -8,6 +8,13 @@ This runner automatically reads challenge input from the appropriate files when
 available, but allows manual input if desired.
 Saving output to a file is also possible.
 
+
+Was it required to make a tool?  
+Nope, but developing things is awesome.
+
+## Screenshot
+![Screenshot of the tool](screenshot.png)
+
 ## Requirements
 - `Rust 1.20`
 
@@ -17,17 +24,15 @@ Saving output to a file is also possible.
 git clone https://github.com/timvisee/advent-of-code-2017 advent-of-code-2017
 cd advent-of-code-2017
 
-# Build the tool using Rust Cargo
-cargo build --release
-cd target/release
 
-# Run the tool
-./advent-of-code-2017-runner
-./advent-of-code-2017-runner --help
-./advent-of-code-2017-runner --day 1 --part 2 --save
-
-# Or run it directly though Cargo
+# Run the tool through Cargo
+cargo run --release
+cargo run --release -- --help
 cargo run --release -- --day 1 --part 2 --save
+
+
+# To run tests, use
+cargo test --all
 ```
 
 ## Resources
