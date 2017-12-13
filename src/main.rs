@@ -63,10 +63,13 @@ fn run(args: ArgHandler) {
                     println!("Failed to write to file: {}", err);
                 }
 
-                println!();
+            } else {
+                println!("Use --save to write the output to a file.");
             }
 
+
             // Show the output
+            println!();
             print_header("Output");
             println!("{}", output);
         },
@@ -152,6 +155,8 @@ fn get_input(selection: Selection, args: &ArgHandler) -> Result<String, String> 
     if !args.is_manual() {
         // Load the input from the file, if the file exists
         if input_path.is_file() {
+            println!("\nFound input file at {:?}.", input_path);
+            println!("Use --manual to force manual input mode.");
             return Ok(
                 read_file(input_path)?
             );
