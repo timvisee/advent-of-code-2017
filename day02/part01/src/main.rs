@@ -40,7 +40,7 @@ fn differences(rows: Vec<String>) -> u16 {
     for row in rows {
         // Split the row into separate numbers, parse them
         let numbers = row
-            .split("\t")
+            .split_whitespace()
             .map(|s| s.parse::<u16>().expect("Invalid row entered"));
 
         // Get the minimum and maximum values
@@ -93,8 +93,8 @@ impl<I> IteratorMinMax for I where I: Iterator {}
 #[test]
 fn example() {
     assert_eq!(differences(vec![
-        "5\t1\t9\t5".into(),
-        "7\t5\t3".into(),
-        "2\t4\t6\t8".into(),
+        "5 1 9 5".into(),
+        "7 5 3".into(),
+        "2 4 6 8".into(),
     ]), 18)
 }

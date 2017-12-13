@@ -39,7 +39,7 @@ fn divisions_sum(rows: Vec<String>) -> u16 {
     'processor: for row in rows  {
         // Split the row into separate numbers, parse and collect them
         let numbers: Vec<u16> = row
-            .split("\t")
+            .split_whitespace()
             .map(|s| s.parse::<u16>().expect("Invalid row entered"))
             .collect();
 
@@ -74,8 +74,8 @@ fn divisions_sum(rows: Vec<String>) -> u16 {
 #[test]
 fn example() {
     assert_eq!(divisions_sum(vec![
-        "5\t9\t2\t8".into(),
-        "9\t4\t7\t3".into(),
-        "3\t8\t6\t5".into(),
+        "5 9 2 8".into(),
+        "9 4 7 3".into(),
+        "3 8 6 5".into(),
     ]), 9)
 }
