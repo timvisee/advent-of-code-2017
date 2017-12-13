@@ -1,9 +1,11 @@
 [package]
-name = "advent-of-code-2017"
+name = "advent-of-code-2017-runner"
 version = "0.1.0"
 authors = ["timvisee <timvisee@gmail.com>"]
 
 [dependencies]
+clap = "2.29"
+
 day01 = { path = "day01" }
 day02 = { path = "day02" }
 day11 = { path = "day11" }
