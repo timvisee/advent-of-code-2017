@@ -8,6 +8,7 @@ clap = "2.29"
 
 day01 = { path = "day01" }
 day02 = { path = "day02" }
+day03 = { path = "day03" }
 day11 = { path = "day11" }
 day12 = { path = "day12" }
 day13 = { path = "day13" }
