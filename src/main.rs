@@ -227,6 +227,7 @@ fn run_challenge(selection: Selection, input: String) -> Result<String, String> 
         2 => match selection.day() {
             1 => day01::part2::run(input),
             2 => day02::part2::run(input),
+            3 => day03::part2::run(input),
             11 => day11::part2::run(input),
             12 => day12::part2::run(input),
             13 => day13::part2::run(input),
