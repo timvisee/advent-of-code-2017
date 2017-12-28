@@ -1,134 +1,122 @@
-use std::collections::HashMap;
-
 /// Entrypoint.
 pub fn run(input: String) -> Result<String, String> {
-    // Trim the input, and try to parse as number
-    let value = input
-        .trim()
-        .parse()
-        .map_err(|_| String::from("invalid input"))?;
-
-    // Get the first Ulam sum value larger than the given value
     Ok(
         format!(
             "{}",
-            first_ulam_sum_larger_than(value)
+            count_lines_without_anagrams(input),
         )
     )
 }
 
-/// Find the first Ulam spiral sum value that is larger than the given `value`.
-/// This method creates a Ulam spiral, where each node value is based on the
-/// sum of all surrounding nodes (of the nodes that are already created).
-/// The spiral is created in order, and node values never change once they
-/// have been created.
-///
-/// This is similar to a fibonacci sequence, although it is formed in a spiral
-/// and uses the sum of the surrounding 8 nodes.
-///
-/// Index `1` is the center of the spiral.
-///
-/// This method calcualtes the answer as defined by the challenge.
-fn first_ulam_sum_larger_than(value: u32) -> u32 {
-    // Create a map to put all nodes in
-    let mut map: HashMap<(i32, i32), u32> = HashMap::new();
-
-    // Start creating each node
-    for index in 1.. {
-        // Determine the position for this node
-        let pos = ulam_position(index);
-
-        // Define a variable to sum up all surrounding values in
-        let mut sum = 0;
-
-        // Set the value for the first node
-        if pos.0 == 0 && pos.1 == 0 {
-            sum = 1;
-
-        } else {
-            // Scan the area around the selected position
-            for x in -1..2 {
-                for y in -1..2 {
-                    // Skip the current node position
-                    if x == 0 && y == 0 {
-                        continue;
-                    }
-
-                    // Add the value of the selected node if any was found
-                    if let Some(value) = map.get(&(pos.0 + x, pos.1 + y)) {
-                        sum += value;
-                    }
-                }
-            }
-        }
-
-        // If the sum is larger than the given value, return it
-        if sum > value {
-            return sum;
-        }
-
-        // Add the node to the map
-        map.insert(pos, sum);
-    }
-
-    // This should never be reached
-    panic!("failed to find next ulam sum value");
+/// Count the number of lines that don't have any anagrams in them.
+fn count_lines_without_anagrams(lines: String) -> usize {
+    // Split the input by lines, and filter empty lines
+    // Filter lines with no duplicates, and count the number of lines left
+    lines.lines()
+        .filter(
+            |line| !line.trim().is_empty()
+        )
+        .filter(
+            |line| !has_anagrams(line)
+        )
+        .count()
 }
 
-/// Get the position on an Ulam spiral,
-/// based on the given index on the spiral.
-///
-/// Index `1` is the center of the spiral.
-///
-/// The result is returned in the format `(x, y)`.
-///
-/// Based on: https://math.stackexchange.com/a/163101/79567
-fn ulam_position(index: u32) -> (i32, i32) {
-    // Use the index as signed number
-    let index = index as i32;
+/// Check whehter the input sentence contains any anagrams.
+fn has_anagrams(input: &str) -> bool {
+    // Split the input string into a word list
+    let words: Vec<&str> = input
+        .trim()
+        .split(" ")
+        .filter(
+            |word| !word.trim().is_empty()
+        )
+        .collect();
 
-    let k = (((index as f64).sqrt() - 1f64) / 2f64).ceil() as i32;
-    let mut t = 2 * k + 1;
-    let mut m = t * t;
-    t -= 1;
+    // Remember the word count
+    let count = words.len();
 
-    if index >= m - t {
-        return (k - (m - index), -k);
+    // Create a buffer for checked words
+    let mut buff: Vec<String> = Vec::with_capacity(count - 1);
+
+    // Loop through all words, make sure they aren't already used
+    for word in words {
+        // Use owned strings
+        let word = word.to_string();
+
+        // Check for any anagrams so far
+        if buff.iter().any(|e| is_anagram(e, word.as_str())) {
+            return true;
+        }
+
+        // Push a word to the used list
+        buff.push(word);
     }
 
-    m = m - t;
+    // No duplicates found
+    return false;
+}
 
-    if index >= m - t {
-        return (-k, -k + (m - index));
+/// Check whether two strings are anagrams of each other.
+/// 
+/// True is returned if string `a` and `b` are anagrams, false if not.
+fn is_anagram(a: &str, b: &str) -> bool {
+    // Return false if both strings have a different length
+    if a.len() != b.len() {
+        return false;
     }
 
-    m = m - t;
+    // Create a set of usable characters
+    let mut set: Vec<char> = a.chars().collect();
 
-    if index >= m - t {
-        (-k + (m - index), k)
-    } else {
-        (k, k - (m - index - t))
+    // Check whether the characters of the other word cover the complete set
+    for c in b.chars() {
+        // The character must be in the list
+        if !set.contains(&c) {
+            return false;
+        }
+
+        // Remove the used character from the set
+        let index = set
+            .iter()
+            .position(|&e| e == c)
+            .unwrap();
+        set.remove(index);
+
+        // If the set is emtpy, we have an anagram
+        if set.is_empty() {
+            return true;
+        }
     }
+
+    // Not an anagram
+    return false;
 }
 
 
 
 #[test]
 fn example_one() {
-    assert_eq!(first_ulam_sum_larger_than(1), 2)
+    assert_eq!(count_lines_without_anagrams("
+        abcde fghij
+        abcde xyz ecdab
+        a ab abc abd abf abj
+        iiii oiii ooii oooi oooo
+        oiii ioii iioi iiio
+    ".into()), 3)
 }
 
 #[test]
-fn example_two() {
-    assert_eq!(first_ulam_sum_larger_than(2), 4)
+fn anagram_one() {
+    assert!(is_anagram("abc", "acb"))
 }
 
 #[test]
-fn example_three() {
-    assert_eq!(first_ulam_sum_larger_than(4), 5)
+fn anagram_two() {
+    assert!(is_anagram("testword", "wdtroets"))
 }
 
 #[test]
-fn example_four() {
-    assert_eq!(first_ulam_sum_larger_than(747), 806)
+fn anagram_three() {
+    assert!(!is_anagram("abc", "abd"))
 }

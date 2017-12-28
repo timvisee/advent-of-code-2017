@@ -1,6 +1,5 @@
 /// Entrypoint.
 pub fn run(input: String) -> Result<String, String> {
-    // Calcualte the Ulam distance, and return
     Ok(
         format!(
             "{}",
