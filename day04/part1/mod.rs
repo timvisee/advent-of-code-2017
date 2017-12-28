@@ -30,7 +30,7 @@ fn count_lines_without_duplicate_words(lines: String) -> usize {
 /// Note: this method is not very efficient.
 fn has_duplicate_words(input: &str) -> bool {
     // Split the input string into a word list
-    let mut words: Vec<&str> = input
+    let words: Vec<&str> = input
         .trim()
         .split(" ")
         .filter(
@@ -41,11 +41,25 @@ fn has_duplicate_words(input: &str) -> bool {
     // Remember the word count
     let count = words.len();
 
-    // Deduplicate
-    words.dedup();
+    // Create a buffer for checked words
+    let mut buff = Vec::with_capacity(count - 1);
 
-    // Had duplicate words if the count changed
-    words.len() != count
+    // Loop through all words, make sure they aren't already used
+    for word in words {
+        // Use owned strings
+        let word = word.to_string();
+
+        // We have duplicates if one has already been used
+        if buff.contains(&word) {
+            return true;
+        }
+
+        // Push a word to the used list
+        buff.push(word);
+    }
+
+    // No duplicates found
+    return false;
 }
 
 
