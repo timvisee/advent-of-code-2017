@@ -2,6 +2,7 @@ extern crate clap;
 extern crate day01;
 extern crate day02;
 extern crate day03;
+extern crate day04;
 extern crate day11;
 extern crate day12;
 extern crate day13;
@@ -219,6 +220,7 @@ fn run_challenge(selection: Selection, input: String) -> Result<String, String> 
             1 => day01::part1::run(input),
             2 => day02::part1::run(input),
             3 => day03::part1::run(input),
+            4 => day04::part1::run(input),
             11 => day11::part1::run(input),
             12 => day12::part1::run(input),
             13 => day13::part1::run(input),
